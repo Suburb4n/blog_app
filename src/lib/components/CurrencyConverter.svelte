@@ -7,6 +7,7 @@
 	let targetCurrency = $state('eur');
 	let targetValue: number | undefined = $state(calculateTarget());
 	$inspect(targetValue);
+
 	function calculateTarget() {
 		return (
 			baseValue && baseRates[targetCurrency] && +(+baseValue * baseRates[targetCurrency]).toFixed(3)
@@ -29,6 +30,15 @@
 	function updateTargetValue(value: number) {
 		targetValue = value;
 		baseValue = calculateBase();
+	}
+
+	function updateBaseCurrency(value: string) {
+		baseCurrency = value;
+		targetValue = calculateTarget();
+	}
+	function updateTargetCurrency(value: string) {
+		targetCurrency = value;
+		targetValue = calculateTarget();
 	}
 </script>
 
@@ -57,7 +67,7 @@
 				updatebaseValue(+e.currentTarget.value);
 			}}
 		/>
-		<select value={baseCurrency}>
+		<select value={baseCurrency} oninput={(e) => updateBaseCurrency(e.currentTarget.value)}>
 			<option value="usd">United States Dollar</option>
 			<option value="eur">Euro</option>
 			<option value="gbp">Pund Sterling</option>
@@ -71,7 +81,7 @@
 				updateTargetValue(+e.currentTarget.value);
 			}}
 		/>
-		<select value={targetCurrency}>
+		<select value={targetCurrency} oninput={(e) => updateTargetCurrency(e.currentTarget.value)}>
 			<option value="usd">United States Dollar</option>
 			<option value="eur">Euro</option>
 			<option value="gbp">Pund Sterling</option>
