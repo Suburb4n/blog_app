@@ -1,13 +1,35 @@
 <script lang="ts">
 	import dummyRates from '$lib/utils/dummy_rates';
 
-	let baseValue = $state(1);
+	let baseValue: number | undefined = $state(1);
 	let baseCurrency = $state('usd');
 	let baseRates = $derived(dummyRates[baseCurrency]);
 	let targetCurrency = $state('eur');
-	let targetValue = $derived(
-		baseValue && baseRates[targetCurrency] && baseValue * baseRates[targetCurrency]
-	);
+	let targetValue: number | undefined = $state(calculateTarget());
+	$inspect(targetValue);
+	function calculateTarget() {
+		return (
+			baseValue && baseRates[targetCurrency] && +(+baseValue * baseRates[targetCurrency]).toFixed(3)
+		);
+	}
+
+	function calculateBase() {
+		return (
+			targetValue &&
+			baseRates[targetCurrency] &&
+			+(targetValue / baseRates[targetCurrency]).toFixed(3)
+		);
+	}
+
+	function updatebaseValue(value: number) {
+		baseValue = value;
+		targetValue = calculateTarget();
+	}
+
+	function updateTargetValue(value: number) {
+		targetValue = value;
+		baseValue = calculateBase();
+	}
 </script>
 
 <div class="wrapper">
@@ -30,26 +52,26 @@
 	<div class="base">
 		<input
 			type="number"
-			bind:value={
-				() => baseValue,
-				(value) => {
-					if (value < 0) {
-						baseValue = 1;
-						return;
-					}
-					baseValue = value;
-				}
-			}
+			value={baseValue}
+			oninput={(e) => {
+				updatebaseValue(+e.currentTarget.value);
+			}}
 		/>
-		<select bind:value={baseCurrency}>
+		<select value={baseCurrency}>
 			<option value="usd">United States Dollar</option>
 			<option value="eur">Euro</option>
 			<option value="gbp">Pund Sterling</option>
 		</select>
 	</div>
 	<div class="target">
-		<input type="number" value={targetValue} />
-		<select bind:value={targetCurrency}>
+		<input
+			type="number"
+			value={targetValue}
+			oninput={(e) => {
+				updateTargetValue(+e.currentTarget.value);
+			}}
+		/>
+		<select value={targetCurrency}>
 			<option value="usd">United States Dollar</option>
 			<option value="eur">Euro</option>
 			<option value="gbp">Pund Sterling</option>
