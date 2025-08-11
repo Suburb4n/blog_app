@@ -1,21 +1,20 @@
 <script lang="ts">
 	class CurrencyConverter {
-		baseValue: number | undefined = $state(1);
-		baseCurrency = $state('usd');
-		baseRates: Record<string, number> = $state({});
-		targetCurrency = $state('eur');
+		#baseValue: number | undefined = $state(1);
+		#baseCurrency = $state('usd');
+		#baseRates: Record<string, number> = $state({});
+		#targetValue: number | undefined = $state();
+		#targetCurrency = $state('eur');
 		currencies = $state({});
 		loading = $state(true);
 		error: string | undefined = $state();
 
 		constructor(baseValue: number, baseCurrency: string, targetCurrency: string) {
-			this.baseValue = baseValue;
-			this.baseCurrency = baseCurrency;
-			this.targetCurrency = targetCurrency;
+			this.#baseValue = baseValue;
+			this.#baseCurrency = baseCurrency;
+			this.#targetCurrency = targetCurrency;
 			this.#loadCurrencies();
-			$effect(() => {
-				this.#fetchRates();
-			});
+			this.#fetchRates();
 		}
 		async #fetchRates() {
 			const res = await fetch(
@@ -26,6 +25,7 @@
 		}
 		async #loadCurrencies() {
 			this.loading = true;
+			this.error = undefined;
 			try {
 				const resp = await fetch(
 					'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json'
@@ -39,27 +39,57 @@
 
 		#calculateTarget() {
 			return (
-				(this.baseValue &&
-					this.baseRates[this.targetCurrency] &&
-					+(this.baseValue * this.baseRates[this.targetCurrency]).toFixed(3)) ||
-				0
+				this.baseValue &&
+				this.baseRates[this.targetCurrency] &&
+				+(this.baseValue * this.baseRates[this.targetCurrency]).toFixed(3)
 			);
 		}
 
-		#calculateBase(targetValue: number) {
+		#calculateBase() {
 			return (
-				targetValue &&
+				this.targetValue &&
 				this.baseRates[this.targetCurrency] &&
-				+(targetValue / this.baseRates[this.targetCurrency]).toFixed(3)
+				+(this.targetValue / this.baseRates[this.targetCurrency]).toFixed(3)
 			);
+		}
+		get baseCurrency() {
+			return this.#baseCurrency;
+		}
+		set baseCurrency(v) {
+			this.#baseCurrency = v;
+			this.#fetchRates();
 		}
 
 		get targetValue() {
-			return this.#calculateTarget();
+			return this.#targetValue || 0;
 		}
 
-		set targetValue(v) {
-			this.baseValue = this.#calculateBase(v);
+		set targetValue(v: number) {
+			this.#targetValue = v;
+			this.#baseValue = this.#calculateBase();
+		}
+
+		get baseValue() {
+			return this.#baseValue;
+		}
+		set baseValue(v) {
+			this.#baseValue = v && v < 0 ? 0 : v;
+			this.#targetValue = this.#calculateTarget();
+		}
+		get baseRates() {
+			return this.#baseRates;
+		}
+		set baseRates(v) {
+			this.#baseRates = v;
+			this.#targetValue = this.#calculateTarget();
+		}
+
+		get targetCurrency() {
+			return this.#targetCurrency;
+		}
+		set targetCurrency(value) {
+			this.#targetCurrency = value;
+			this.#targetValue = this.#calculateTarget();
 		}
 	}
 
@@ -99,7 +129,7 @@
 			<input type="number" bind:value={cc.targetValue} />
 			<select bind:value={cc.targetCurrency}>
 				{#each Object.entries(cc.currencies) as [key, value]}
-					<option value={key}>{value}</option>
+					<option value={key}>{value || key}</option>
 				{/each}
 			</select>
 		</div>
