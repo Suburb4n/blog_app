@@ -1,93 +1,110 @@
 <script lang="ts">
-	import dummyRates from '$lib/utils/dummy_rates';
+	class CurrencyConverter {
+		baseValue: number | undefined = $state(1);
+		baseCurrency = $state('usd');
+		baseRates: Record<string, number> = $state({});
+		targetCurrency = $state('eur');
+		currencies = $state({});
+		loading = $state(true);
+		error: string | undefined = $state();
 
-	let baseValue: number | undefined = $state(1);
-	let baseCurrency = $state('usd');
-	let baseRates = $derived(dummyRates[baseCurrency]);
-	let targetCurrency = $state('eur');
-	let targetValue: number | undefined = $state(calculateTarget());
-	$inspect(targetValue);
+		constructor(baseValue: number, baseCurrency: string, targetCurrency: string) {
+			this.baseValue = baseValue;
+			this.baseCurrency = baseCurrency;
+			this.targetCurrency = targetCurrency;
+			this.#loadCurrencies();
+			$effect(() => {
+				this.#fetchRates();
+			});
+		}
+		async #fetchRates() {
+			const res = await fetch(
+				`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${this.baseCurrency}.json`
+			);
+			const resJSON = await res.json();
+			this.baseRates = resJSON[this.baseCurrency];
+		}
+		async #loadCurrencies() {
+			this.loading = true;
+			try {
+				const resp = await fetch(
+					'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json'
+				).then((r) => r.json());
+				this.currencies = resp;
+			} catch (error) {
+				this.error = 'An error has occured';
+			}
+			this.loading = false;
+		}
 
-	function calculateTarget() {
-		return (
-			baseValue && baseRates[targetCurrency] && +(+baseValue * baseRates[targetCurrency]).toFixed(3)
-		);
+		#calculateTarget() {
+			return (
+				(this.baseValue &&
+					this.baseRates[this.targetCurrency] &&
+					+(this.baseValue * this.baseRates[this.targetCurrency]).toFixed(3)) ||
+				0
+			);
+		}
+
+		#calculateBase(targetValue: number) {
+			return (
+				targetValue &&
+				this.baseRates[this.targetCurrency] &&
+				+(targetValue / this.baseRates[this.targetCurrency]).toFixed(3)
+			);
+		}
+
+		get targetValue() {
+			return this.#calculateTarget();
+		}
+
+		set targetValue(v) {
+			this.baseValue = this.#calculateBase(v);
+		}
 	}
 
-	function calculateBase() {
-		return (
-			targetValue &&
-			baseRates[targetCurrency] &&
-			+(targetValue / baseRates[targetCurrency]).toFixed(3)
-		);
-	}
-
-	function updatebaseValue(value: number) {
-		baseValue = value;
-		targetValue = calculateTarget();
-	}
-
-	function updateTargetValue(value: number) {
-		targetValue = value;
-		baseValue = calculateBase();
-	}
-
-	function updateBaseCurrency(value: string) {
-		baseCurrency = value;
-		targetValue = calculateTarget();
-	}
-	function updateTargetCurrency(value: string) {
-		targetCurrency = value;
-		targetValue = calculateTarget();
-	}
+	const cc = new CurrencyConverter(1, 'usd', 'eur');
 </script>
 
-<div class="wrapper">
-	<div class="conversion">
-		<span class="base"
-			>{Number(1).toLocaleString('en-US', {
-				style: 'currency',
-				currency: baseCurrency,
-				currencyDisplay: 'name'
-			})} equals</span
-		>
-		<span class="target"
-			>{baseRates[targetCurrency].toLocaleString('en-US', {
-				style: 'currency',
-				currency: targetCurrency,
-				currencyDisplay: 'name'
-			})}</span
-		>
+{#if cc.error}
+	<p>{cc.error}</p>
+{:else if cc.loading}
+	<p>Loading...</p>{:else}
+	<div class="wrapper">
+		<div class="conversion">
+			<span class="base"
+				>{Number(1).toLocaleString('en-US', {
+					style: 'currency',
+					currency: cc.baseCurrency,
+					currencyDisplay: 'name'
+				})} equals</span
+			>
+			<span class="target"
+				>{cc.baseRates[cc.targetCurrency]?.toLocaleString('en-US', {
+					style: 'currency',
+					currency: cc.targetCurrency,
+					currencyDisplay: 'name'
+				})}</span
+			>
+		</div>
+		<div class="base">
+			<input type="number" bind:value={cc.baseValue} />
+			<select bind:value={cc.baseCurrency}>
+				{#each Object.entries(cc.currencies) as [key, value]}
+					<option value={key}>{value || key}</option>
+				{/each}
+			</select>
+		</div>
+		<div class="target">
+			<input type="number" bind:value={cc.targetValue} />
+			<select bind:value={cc.targetCurrency}>
+				{#each Object.entries(cc.currencies) as [key, value]}
+					<option value={key}>{value}</option>
+				{/each}
+			</select>
+		</div>
 	</div>
-	<div class="base">
-		<input
-			type="number"
-			value={baseValue}
-			oninput={(e) => {
-				updatebaseValue(+e.currentTarget.value);
-			}}
-		/>
-		<select value={baseCurrency} oninput={(e) => updateBaseCurrency(e.currentTarget.value)}>
-			<option value="usd">United States Dollar</option>
-			<option value="eur">Euro</option>
-			<option value="gbp">Pund Sterling</option>
-		</select>
-	</div>
-	<div class="target">
-		<input
-			type="number"
-			value={targetValue}
-			oninput={(e) => {
-				updateTargetValue(+e.currentTarget.value);
-			}}
-		/>
-		<select value={targetCurrency} oninput={(e) => updateTargetCurrency(e.currentTarget.value)}>
-			<option value="usd">United States Dollar</option>
-			<option value="eur">Euro</option>
-			<option value="gbp">Pund Sterling</option>
-		</select>
-	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	.wrapper {
