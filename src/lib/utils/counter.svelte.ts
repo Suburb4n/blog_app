@@ -1,17 +1,16 @@
-// function createCounter(){
-// 	let count = $state(0);
-//     $effect(()=>{
+const count = $state({
+    value:0,
+})
 
-//     })
-//     return{
-//         get value(){return count},
-//         increment: ()=>{count += 1},
-//         reset:()=>{count = 0},
-//     }
-// }
-// export default createCounter;
-
+export default count;
+export function increment(){
+    count.value++;
+}
+export function reset(){
+    count.value = 0;
+}
 // class Counter{
+
 //     value = $state(0);
 
 //     increment = ()=>{
@@ -21,17 +20,18 @@
 //         this.value = 0
 //     }
 // }
-// export default Counter
+// const counter = new Counter()
+// export default counter
 
-let count = $state(0);
+// let count = $state(0);
 
-export default {
-    get value(){return count},
-    set value(v){ count = v},
-    increment:()=>{
-        count++
-    },
-    reset:()=>{
-        count = 0
-    }
-}
+// export default {
+//     get value(){return count},
+//     set value(v){ count = v},
+//     increment:()=>{
+//         count++
+//     },
+//     reset:()=>{
+//         count = 0
+//     }
+// }
