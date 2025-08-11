@@ -25,12 +25,13 @@
 
 let count = $state(0);
 
-export function getCount(){
-    return count;
-}
-export function increment(){
-    count++
-}
-export function reset(){
-    count = 0;
+export default {
+    get value(){return count},
+    set value(v){ count = v},
+    increment:()=>{
+        count++
+    },
+    reset:()=>{
+        count = 0
+    }
 }

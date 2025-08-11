@@ -4,6 +4,8 @@
 </script>
 
 <ClickToCount />
+<ClickToCount />
+<ClickToCount />
 <DoubleClickToCount />
 
 <style>

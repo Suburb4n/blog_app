@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCount, increment, reset } from '$lib/utils/counter.svelte';
+	import counter from '$lib/utils/counter.svelte';
 
 	// import Counter from '$lib/utils/counter.svelte';
 	import Button from './Button.svelte';
@@ -10,9 +10,9 @@
 </script>
 
 <div class="wrapper">
-	<h2>{getCount()}</h2>
-	<Button --buttonBgColor="#000" ondblclick={increment}>Increment</Button>
-	<Button --buttonBgColor="#fff" --buttonTextColor="#000" onclick={reset}>Reset</Button>
+	<h2>{counter.value}</h2>
+	<Button --buttonBgColor="#000" ondblclick={counter.increment}>Increment</Button>
+	<Button --buttonBgColor="#fff" --buttonTextColor="#000" onclick={counter.reset}>Reset</Button>
 </div>
 
 <style>
