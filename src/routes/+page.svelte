@@ -20,7 +20,8 @@
 			y={40}
 			fill="blanchedalmond"
 		/>
-		<Rect width={100} height={100} {x} {y} {fill} stroke="coral" strokeWidth={3}></Rect>
+		<Rect draggable width={100} height={100} bind:x bind:y {fill} stroke="coral" strokeWidth={3}
+		></Rect>
 	</Layer>
 </Stage>
 

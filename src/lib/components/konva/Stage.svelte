@@ -2,7 +2,7 @@
 	import { onMount, type Snippet } from 'svelte';
 	import Konva from 'konva';
 	import { setStageContext } from './konva_context';
-	import { registerEvents, type KonvaEventHooks } from './events';
+	import { registerEffect, registerEvents, type KonvaEventHooks } from './events.svelte';
 
 	type Props = {
 		children?: Snippet;
@@ -23,19 +23,12 @@
 			...props
 		});
 		registerEvents(props, stage);
+		registerEffect(props, stage);
 		isReady = true;
 		return () => {
 			stage.destroy();
 		};
 	});
-
-	Object.keys(props)
-		.filter((prop) => !prop.startsWith('on'))
-		.forEach((prop) => {
-			$effect(() => {
-				stage.setAttr(prop, props[prop]);
-			});
-		});
 </script>
 
 <div bind:this={container}>

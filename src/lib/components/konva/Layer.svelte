@@ -2,7 +2,7 @@
 	import Konva from 'konva';
 	import { onDestroy, type Snippet } from 'svelte';
 	import { getStageContext, setLayerContext } from './konva_context';
-	import { registerEvents, type KonvaEventHooks } from './events';
+	import { registerEffect, registerEvents, type KonvaEventHooks } from './events.svelte';
 
 	type Props = {
 		children?: Snippet;
@@ -18,15 +18,9 @@
 	const stage = getStageContext();
 
 	stage.add(node);
-
+	registerEffect(props, stage);
 	setLayerContext(node);
-	Object.keys(props)
-		.filter((prop) => !prop.startsWith('on'))
-		.forEach((prop) => {
-			$effect(() => {
-				node.setAttr(prop, props[prop]);
-			});
-		});
+
 	onDestroy(() => {
 		node.destroy();
 	});

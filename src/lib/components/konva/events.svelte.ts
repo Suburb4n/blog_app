@@ -1,3 +1,4 @@
+import type Konva from 'konva';
 import type { KonvaEventObject, Node } from 'konva/lib/Node';
 
 export const KONVA_EVENTS = [
@@ -83,4 +84,15 @@ export function registerEvents(props:KonvaEventHooks, node:Node){
 			});
 		}
 	});
+}
+export type KonvaProps = Konva.StageConfig &
+		KonvaEventHooks
+export function registerEffect(props:KonvaProps, node:Node){
+	Object.keys(props)
+		.filter((prop) => !prop.startsWith('on'))
+		.forEach((prop) => {
+			$effect(() => {
+				node.setAttr(prop, props[prop]);
+			});
+		});
 }
