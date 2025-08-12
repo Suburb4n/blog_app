@@ -30,7 +30,7 @@
 	});
 
 	Object.keys(props)
-		.filter((prop) => prop.startsWith('on'))
+		.filter((prop) => !prop.startsWith('on'))
 		.forEach((prop) => {
 			$effect(() => {
 				stage.setAttr(prop, props[prop]);

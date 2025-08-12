@@ -2,7 +2,7 @@
 	import Konva from 'konva';
 	import { onDestroy } from 'svelte';
 	import { getLayerContext } from './konva_context';
-	import { type KonvaEventHooks, KONVA_EVENTS, registerEvents } from './events';
+	import { type KonvaEventHooks, registerEvents } from './events';
 
 	let props: Konva.RectConfig & KonvaEventHooks = $props();
 	const node = new Konva.Rect(props);
@@ -10,6 +10,13 @@
 	const layer = getLayerContext();
 	layer.add(node);
 
+	Object.keys(props)
+		.filter((prop) => !prop.startsWith('on'))
+		.forEach((prop) => {
+			$effect(() => {
+				node.setAttr(prop, props[prop]);
+			});
+		});
 	onDestroy(() => {
 		node.destroy();
 	});
