@@ -28,13 +28,7 @@
 		></Rect>
 	</Layer>
 </Stage>
-<button
-	onclick={() => {
-		console.log(stage);
-		console.log(layer);
-		console.log(rec1);
-	}}>Log Info</button
->
+<button onclick={() => {}}>Log Info</button>
 <input type="range" bind:value={x} min={0} max={300} />
 <input type="range" bind:value={y} min={0} max={300} />
 <input type="color" bind:value={fill} />
