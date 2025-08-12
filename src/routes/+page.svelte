@@ -4,7 +4,17 @@
 
 <Stage width={500} height={500}>
 	<Layer>
-		<Rect width={200} height={200} x={20} y={40} fill="purple"></Rect>
+		<Rect
+			ondragend={(e) => console.log(e)}
+			draggable
+			stroke="yellow"
+			strokeWidth={4}
+			width={200}
+			height={200}
+			x={20}
+			y={40}
+			fill="purple"
+		/>
 	</Layer>
 </Stage>
 

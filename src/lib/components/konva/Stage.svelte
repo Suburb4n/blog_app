@@ -2,10 +2,12 @@
 	import type { Snippet } from 'svelte';
 	import Konva from 'konva';
 	import { setStageContext } from './konva_context';
+	import { registerEvents, type KonvaEventHooks } from './events';
 
 	type Props = {
 		children?: Snippet;
-	} & Konva.StageConfig;
+	} & Konva.StageConfig &
+		KonvaEventHooks;
 
 	let { children, ...props }: Props = $props();
 
@@ -20,6 +22,7 @@
 			container,
 			...props
 		});
+		registerEvents(props, stage);
 		isReady = true;
 		return () => {
 			stage.destroy();
