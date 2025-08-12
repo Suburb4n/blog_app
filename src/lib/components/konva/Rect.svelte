@@ -10,7 +10,7 @@
 		staticProps,
 		...props
 	}: { staticProps?: boolean } & Konva.RectConfig & KonvaEventHooks = $props();
-	const node = new Konva.Rect(props);
+	export const node = new Konva.Rect(props);
 	if (!staticProps) {
 		node.on('dragend', (e) => {
 			x = e.currentTarget.attrs.x;

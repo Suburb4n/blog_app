@@ -5,11 +5,15 @@
 	let x = $state(180);
 	let y = $state(90);
 	let fill = $state('#A020F0');
+	let stage: Stage;
+	let layer: Layer;
+	let rec1: Rect;
 </script>
 
-<Stage width={innerWidth.current} height={(innerHeight.current || 0) / 1.2}>
-	<Layer>
+<Stage bind:this={stage} width={innerWidth.current} height={(innerHeight.current || 0) / 1.2}>
+	<Layer bind:this={layer}>
 		<Rect
+			bind:this={rec1}
 			ondragend={(e) => console.log(e)}
 			draggable
 			stroke="green"
@@ -24,7 +28,13 @@
 		></Rect>
 	</Layer>
 </Stage>
-
+<button
+	onclick={() => {
+		console.log(stage);
+		console.log(layer);
+		console.log(rec1);
+	}}>Log Info</button
+>
 <input type="range" bind:value={x} min={0} max={300} />
 <input type="range" bind:value={y} min={0} max={300} />
 <input type="color" bind:value={fill} />

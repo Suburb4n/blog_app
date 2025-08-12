@@ -11,7 +11,7 @@
 
 	let { children, ...props }: Props = $props();
 
-	const node = new Konva.Layer(props);
+	export const node = new Konva.Layer(props);
 
 	registerEvents(props, node);
 
