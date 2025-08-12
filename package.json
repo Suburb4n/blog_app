@@ -43,6 +43,8 @@
 		"vitest-browser-svelte": "^0.1.0"
 	},
 	"dependencies": {
+		"canvas": "^3.1.2",
+		"konva": "^9.3.22",
 		"lorem-ipsum": "^2.0.8",
 		"sass-embedded": "^1.90.0",
 		"uuid": "^11.1.0"
