@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Stage, Layer, Rect } from '$lib/components/konva';
+	import { innerWidth, innerHeight } from 'svelte/reactivity/window';
+
 	let x = $state(180);
 	let y = $state(90);
 	let fill = $state('#A020F0');
 </script>
 
-<Stage width={500} height={500}>
+<Stage width={innerWidth.current} height={(innerHeight.current || 0) / 1.2}>
 	<Layer>
 		<Rect
 			ondragend={(e) => console.log(e)}

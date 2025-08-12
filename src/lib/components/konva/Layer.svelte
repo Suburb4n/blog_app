@@ -12,10 +12,15 @@
 	let { children, ...props }: Props = $props();
 
 	const node = new Konva.Layer(props);
-	registerEvents(props, node);
-	const stage = getStageContext();
-	stage.add(node);
-	setLayerContext(node);
+	
+    registerEvents(props, node);
+	
+    const stage = getStageContext();
+	
+    stage.add(node);
+	
+    setLayerContext(node);
+
 	onDestroy(() => {
 		node.destroy();
 	});
