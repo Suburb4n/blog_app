@@ -1,12 +1,9 @@
 <script lang="ts">
-	import ClickToCount from '$lib/components/ClickToCount.svelte';
-	import DoubleClickToCount from '$lib/components/DoubleClickToCount.svelte';
+	import { scrollY } from 'svelte/reactivity/window';
 </script>
 
-<ClickToCount />
-<ClickToCount />
-<ClickToCount />
-<DoubleClickToCount />
+<h1 style="position:fixed;">{scrollY.current}</h1>
+<div style="height:2000px;"></div>
 
 <style>
 	:global {

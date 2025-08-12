@@ -1,4 +1,9 @@
-const count = $state({
+import { browser } from "$app/environment";
+
+const storedCount = browser && localStorage.getItem('count') 
+
+
+const count = $state( storedCount? JSON.parse(storedCount) : {
     value:0,
 })
 
@@ -9,6 +14,12 @@ export function increment(){
 export function reset(){
     count.value = 0;
 }
+
+$effect.root(()=>{
+    $effect(()=>{
+        localStorage.setItem('count', JSON.stringify(count))
+    })
+})
 // class Counter{
 
 //     value = $state(0);
