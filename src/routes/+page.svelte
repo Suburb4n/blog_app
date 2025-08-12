@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { scrollY } from 'svelte/reactivity/window';
+	import { Stage, Layer, Rect } from '$lib/components/konva';
 </script>
 
-<h1 style="position:fixed;">{scrollY.current}</h1>
-<div style="height:2000px;"></div>
+<Stage width={500} height={500}>
+	<Layer>
+		<Rect width={200} height={200} x={20} y={40} fill="purple"></Rect>
+	</Layer>
+</Stage>
 
 <style>
 	:global {

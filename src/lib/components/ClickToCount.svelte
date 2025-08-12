@@ -1,12 +1,6 @@
 <script lang="ts">
 	import count, { increment, reset } from '$lib/utils/counter.svelte';
-	// import Counter from '$lib/utils/counter.svelte';
-
-	// import createCounter from '$lib/utils/counter.svelte';
 	import Button from './Button.svelte';
-
-	// const counter = createCounter();
-	// const counter = new Counter();
 </script>
 
 <div class="wrapper">
